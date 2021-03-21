@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/argoproj/argo-cd/util/awssecret"
+	"github.com/aws/aws-sdk-go/aws"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -550,7 +552,35 @@ func helmTemplate(appPath string, repoRoot string, env *v1alpha1.Env, q *apiclie
 					return nil, err
 				}
 			}
-			templateOpts.Values = append(templateOpts.Values, val)
+			if strings.Contains(val, "aws-secret") {
+				// This will take all values files that are prefixed with 'aws-secret' and try to take it out of aws-secret-manger
+				secretName := strings.Split(val, "/")[1]
+				secretManager := awssecret.SecretManager{Config: &aws.Config{}}
+				secretData, err := secretManager.GetSecret(secretName)
+				if err != nil {
+					return nil, err
+				}
+				absWorkDir, err := filepath.Abs(appPath)
+				if err != nil {
+					return nil, err
+				}
+				SecretFilepath := filepath.Join(absWorkDir, secretName)
+				f, err := os.Create(SecretFilepath)
+				if err != nil {
+					return nil, err
+				}
+				_, err = f.WriteString(secretData)
+				if err != nil {
+					return nil, err
+				}
+				err = f.Close()
+				if err != nil {
+					return nil, err
+				}
+				templateOpts.Values = append(templateOpts.Values, SecretFilepath)
+			} else {
+				templateOpts.Values = append(templateOpts.Values, val)
+			}
 		}
 
 		if appHelm.Values != "" {

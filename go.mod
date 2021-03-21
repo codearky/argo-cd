@@ -9,6 +9,7 @@ require (
 	github.com/alicebob/miniredis/v2 v2.14.2
 	github.com/argoproj/gitops-engine v0.3.0
 	github.com/argoproj/pkg v0.2.0
+	github.com/aws/aws-sdk-go v1.35.24
 	github.com/bombsimon/logrusr v1.0.0
 	github.com/bradleyfalzon/ghinstallation v1.1.1
 	github.com/casbin/casbin v1.9.1
@@ -32,7 +33,7 @@ require (
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.3
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect
-	github.com/google/go-cmp v0.5.2
+	github.com/google/go-cmp v0.5.4
 	github.com/google/go-jsonnet v0.17.0
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/google/uuid v1.1.2
